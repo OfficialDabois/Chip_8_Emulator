@@ -7,7 +7,7 @@
 int main() {
     Chip8 chip8;
 
-    if (!chip8.LoadRom("3-corax+.ch8")) {
+    if (!chip8.LoadRom("4-flags.ch8")) {
         std::cerr << "Failed to load rom" << std::endl;
         return -1;
     }
@@ -17,10 +17,10 @@ int main() {
     std::cin >> inp;
     if (inp == "1") {
         chip8.cosmac = true;
-        std::cout << "COSMAC VIP instructions chosen";
+        std::cout << "COSMAC VIP instructions chosen" << std::endl;
     } else {
         chip8.cosmac = false;
-        std::cout << "CHIP-48/SUPER-CHIP instructions chosen";
+        std::cout << "CHIP-48/SUPER-CHIP instructions chosen" << std::endl;
     }
 
     SDL_Window* window = nullptr;

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <array>
 
+//These are backwards but I cant be bothered to change them, soz :P
 #define FIRSTNIB(h) (h & 0x000F)
 #define SECONDNIB(h) (h & 0x00F0) >> 4
 #define THIRDNIB(h) (h & 0x0F00) >> 8

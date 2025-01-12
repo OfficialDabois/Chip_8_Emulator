@@ -144,13 +144,64 @@ void Chip8::OneCycle() {
                 V[THIRDNIB(opcode)] = V[THIRDNIB(opcode)] << 1;
                 break;
             }
+            default: {
+                std::cout << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
+                return;
+            }
         }
     } else if ((opcode & 0xF000) >> 12 == 0xF) {
-            switch (opcode * 0xF0FF) {
+            switch (opcode & 0xF0FF) {
+                //Add to index
+                case 0xF01E: {
+                    I += V[THIRDNIB(opcode)];
+                    if (V[THIRDNIB(opcode)] >> 0x0FFF)
+                        V[0xF] = 1;
+                    break;
+                }
+                //Binary-coded decimal conversion
+                case 0xF033: {
+                    uint8_t a = V[THIRDNIB(opcode)] / 100 % 10;
+                    uint8_t b = V[THIRDNIB(opcode)] / 10 % 10;
+                    uint8_t c = V[THIRDNIB(opcode)] % 10;
+
+                    const uint8_t arr[] = {a, b, c};
+
+                    for (int i = 0; i < 3; i++) {
+                        uint16_t temp = I + i;
+                        RAM[temp] = arr[i];
+                    }
+                    break;
+                }
+                //Store registers in memory
                 case 0xF055: {
                     if (cosmac) {
-
+                        for (int i = 0; i <= THIRDNIB(opcode); i++) {
+                            RAM[I] = V[i];
+                            I += 1;
+                        }
+                    } else {
+                        for (int i = 0; i <= THIRDNIB(opcode); i++) {
+                            RAM[I + i] = V[i];
+                        }
                     }
+                    break;
+                }
+                case 0xF065: {
+                    if (cosmac) {
+                        for (int i = 0; i <= THIRDNIB(opcode); i++) {
+                            V[i] = RAM[I];
+                            I += 1;
+                        }
+                    } else {
+                        for (int i = 0; i <= THIRDNIB(opcode); i++) {
+                            V[i] = RAM[I + i];
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    std::cout << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
+                    return;
                 }
             }
     } else {
